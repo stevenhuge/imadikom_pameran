@@ -28,10 +28,10 @@ try {
         }
     }
 
-    $response = $app->handleRequest(Request::capture());
-    if (method_exists($response, 'send')) {
-        $response->send();
-    }
+    // Fix for Vercel: Prevent Laravel from stripping '/api' from the Request URI
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
+    
+    $app->handleRequest(Request::capture());
 } catch (\Throwable $e) {
     echo "<h1>Vercel Fatal Crash:</h1>";
     echo "<p><b>Message:</b> " . $e->getMessage() . "</p>";
