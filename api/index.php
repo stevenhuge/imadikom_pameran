@@ -30,4 +30,14 @@ foreach ($directories as $dir) {
     }
 }
 
-$app->handleRequest(Request::capture());
+try {
+    $response = $app->handleRequest(Request::capture());
+    if (method_exists($response, 'send')) {
+        $response->send();
+    }
+} catch (\Throwable $e) {
+    echo "<h1>Vercel Debug Error:</h1>";
+    echo "<p><b>Message:</b> " . $e->getMessage() . "</p>";
+    echo "<p><b>File:</b> " . $e->getFile() . " on line " . $e->getLine() . "</p>";
+    echo "<pre style='background:#f4f4f4; padding:10px;'>" . $e->getTraceAsString() . "</pre>";
+}
