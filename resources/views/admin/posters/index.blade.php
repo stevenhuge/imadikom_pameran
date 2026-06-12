@@ -36,7 +36,7 @@
                     <tr class="border-b border-white/5 hover:bg-white/2 transition-colors">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-4">
-                                <img src="{{ asset('storage/' . $poster->gambar) }}" class="w-16 h-16 rounded-xl object-cover border border-white/10">
+                                <img src="{{ str_starts_with($poster->gambar, 'http') ? $poster->gambar : asset('storage/' . $poster->gambar) }}" class="w-16 h-16 rounded-xl object-cover border border-white/10">
                                 <div>
                                     <h3 class="text-white font-medium">{{ $poster->judul }}</h3>
                                     <p class="text-white/40 text-xs mt-0.5 line-clamp-1">{{ $poster->deskripsi ?? 'Tidak ada deskripsi' }}</p>

@@ -113,7 +113,7 @@
             <div class="flex flex-col items-center group animate-fade-up" style="animation-delay: {{ $pos * 150 }}ms;">
                 {{-- Poster Preview --}}
                 <div class="relative w-full {{ $style['height'] }} rounded-t-2xl overflow-hidden border-t border-l border-r {{ $style['border'] }} {{ $style['shadow'] }} transition-transform duration-500 group-hover:-translate-y-2">
-                    <img src="{{ asset('storage/' . $poster->gambar) }}" alt="{{ $poster->judul }}" class="w-full h-full object-cover">
+                    <img src="{{ str_starts_with($poster->gambar, 'http') ? $poster->gambar : asset('storage/' . $poster->gambar) }}" alt="{{ $poster->judul }}" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-transparent"></div>
                     
                     <div class="absolute bottom-3 inset-x-2 sm:bottom-4 sm:inset-x-4 text-center">
@@ -245,8 +245,8 @@
 
             {{-- Gambar Poster --}}
             <div class="relative overflow-hidden aspect-[3/4] w-full shrink-0 bg-slate-100 dark:bg-slate-800/50 cursor-pointer group/img"
-                 @click="openModal = true; modalImg = '{{ asset('storage/' . $poster->gambar) }}'; modalTitle = '{{ addslashes($poster->judul) }}'; modalMaker = '{{ addslashes($poster->pembuat) }}'">
-                <img src="{{ asset('storage/' . $poster->gambar) }}"
+                 @click="openModal = true; modalImg = '{{ str_starts_with($poster->gambar, 'http') ? $poster->gambar : asset('storage/' . $poster->gambar) }}'; modalTitle = '{{ addslashes($poster->judul) }}'; modalMaker = '{{ addslashes($poster->pembuat) }}'">
+                <img src="{{ str_starts_with($poster->gambar, 'http') ? $poster->gambar : asset('storage/' . $poster->gambar) }}"
                      alt="{{ $poster->judul }}"
                      class="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105"
                      loading="lazy">

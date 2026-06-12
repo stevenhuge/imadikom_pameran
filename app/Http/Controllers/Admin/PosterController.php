@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Poster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class PosterController extends Controller
 {
@@ -32,8 +33,11 @@ class PosterController extends Controller
 
         $validated['is_bidikmisi'] = $request->boolean('is_bidikmisi');
 
-        $path = $request->file('gambar')->store('posters', 'public');
-        $validated['gambar'] = $path;
+        if (env('CLOUDINARY_URL')) {
+            $validated['gambar'] = $this->uploadToCloudinary($request->file('gambar'));
+        } else {
+            $validated['gambar'] = $request->file('gambar')->store('posters', 'public');
+        }
 
         Poster::create($validated);
         return redirect()->route('admin.posters.index')
@@ -59,8 +63,13 @@ class PosterController extends Controller
         $validated['is_bidikmisi'] = $request->boolean('is_bidikmisi');
 
         if ($request->hasFile('gambar')) {
-            Storage::disk('public')->delete($poster->gambar);
-            $validated['gambar'] = $request->file('gambar')->store('posters', 'public');
+            if (env('CLOUDINARY_URL')) {
+                $this->deleteFromCloudinary($poster->gambar);
+                $validated['gambar'] = $this->uploadToCloudinary($request->file('gambar'));
+            } else {
+                Storage::disk('public')->delete($poster->gambar);
+                $validated['gambar'] = $request->file('gambar')->store('posters', 'public');
+            }
         } else {
             unset($validated['gambar']);
         }
@@ -72,8 +81,65 @@ class PosterController extends Controller
 
     public function destroy(Poster $poster)
     {
-        Storage::disk('public')->delete($poster->gambar);
+        if (env('CLOUDINARY_URL')) {
+            $this->deleteFromCloudinary($poster->gambar);
+        } else {
+            Storage::disk('public')->delete($poster->gambar);
+        }
+        
         $poster->delete();
         return back()->with('success', 'Poster berhasil dihapus!');
+    }
+
+    private function uploadToCloudinary($file)
+    {
+        $cloudinaryUrl = env('CLOUDINARY_URL');
+        $parsedUrl = parse_url($cloudinaryUrl);
+        $apiKey = $parsedUrl['user'];
+        $apiSecret = $parsedUrl['pass'];
+        $cloudName = $parsedUrl['host'];
+
+        $timestamp = time();
+        $signature = sha1("timestamp={$timestamp}{$apiSecret}");
+
+        $response = Http::attach(
+            'file', file_get_contents($file->getRealPath()), $file->getClientOriginalName()
+        )->post("https://api.cloudinary.com/v1_1/{$cloudName}/image/upload", [
+            'api_key' => $apiKey,
+            'timestamp' => $timestamp,
+            'signature' => $signature,
+            'folder' => 'imadikom_posters'
+        ]);
+
+        if ($response->successful()) {
+            return $response->json('secure_url');
+        }
+
+        throw new \Exception('Gagal mengunggah gambar ke Cloudinary: ' . $response->body());
+    }
+
+    private function deleteFromCloudinary($url)
+    {
+        if (!str_contains($url, 'cloudinary.com')) return;
+
+        $cloudinaryUrl = env('CLOUDINARY_URL');
+        $parsedUrl = parse_url($cloudinaryUrl);
+        $apiKey = $parsedUrl['user'];
+        $apiSecret = $parsedUrl['pass'];
+        $cloudName = $parsedUrl['host'];
+
+        preg_match('/upload\/(?:v\d+\/)?(.*?)\.[a-zA-Z0-9]+$/', $url, $matches);
+        if (!isset($matches[1])) return;
+        $publicId = $matches[1];
+
+        $timestamp = time();
+        $signature = sha1("public_id={$publicId}&timestamp={$timestamp}{$apiSecret}");
+
+        Http::post("https://api.cloudinary.com/v1_1/{$cloudName}/image/destroy", [
+            'api_key' => $apiKey,
+            'public_id' => $publicId,
+            'timestamp' => $timestamp,
+            'signature' => $signature,
+        ]);
     }
 }

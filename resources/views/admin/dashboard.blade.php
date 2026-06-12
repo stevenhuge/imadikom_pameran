@@ -74,7 +74,7 @@
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <img src="{{ asset('storage/' . $poster->gambar) }}" class="w-10 h-10 rounded-lg object-cover">
+                            <img src="{{ str_starts_with($poster->gambar, 'http') ? $poster->gambar : asset('storage/' . $poster->gambar) }}" class="w-10 h-10 rounded-lg object-cover">
                             <span class="text-slate-800 dark:text-white text-sm font-medium">{{ $poster->judul }}</span>
                         </div>
                     </td>

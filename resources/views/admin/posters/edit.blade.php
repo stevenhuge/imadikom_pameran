@@ -68,7 +68,7 @@
             <div>
                 <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Gambar Saat Ini</label>
                 <div class="mb-4">
-                    <img src="{{ asset('storage/' . $poster->gambar) }}" alt="Poster" class="h-32 rounded-lg object-cover border border-slate-200 dark:border-slate-700">
+                    <img src="{{ str_starts_with($poster->gambar, 'http') ? $poster->gambar : asset('storage/' . $poster->gambar) }}" alt="Poster" class="h-32 rounded-lg object-cover border border-slate-200 dark:border-slate-700">
                 </div>
                 
                 <label for="gambar" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Ganti Gambar (Opsional)</label>

@@ -33,7 +33,7 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                                <img src="{{ asset('storage/' . $vote->poster->gambar) }}" class="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700">
+                                <img src="{{ str_starts_with($vote->poster->gambar, 'http') ? $vote->poster->gambar : asset('storage/' . $vote->poster->gambar) }}" class="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700">
                                 <div>
                                     <div class="text-slate-800 dark:text-slate-100 font-medium line-clamp-1">{{ $vote->poster->judul }}</div>
                                     <div class="text-slate-500 dark:text-slate-400 text-xs mt-0.5 flex items-center gap-1.5">
