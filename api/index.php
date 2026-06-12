@@ -5,39 +5,43 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Register the Composer autoloader...
 require __DIR__.'/../vendor/autoload.php';
 
-// Bootstrap Laravel and handle the request...
-/** @var Application $app */
-$app = require_once __DIR__.'/../bootstrap/app.php';
-
-// Set storage path to /tmp to avoid Read-Only file system errors on Vercel
-$app->useStoragePath('/tmp/storage');
-
-// Create required directories in /tmp
-$directories = [
-    '/tmp/storage/framework/views',
-    '/tmp/storage/framework/cache/data',
-    '/tmp/storage/framework/sessions',
-    '/tmp/storage/logs',
-    '/tmp/storage/app/public',
-];
-
-foreach ($directories as $dir) {
-    if (!is_dir($dir)) {
-        mkdir($dir, 0777, true);
-    }
-}
+// FORCE DEBUG MODE TO SEE THE ERROR ON VERCEL
+putenv('APP_DEBUG=true');
+$_ENV['APP_DEBUG'] = true;
+$_SERVER['APP_DEBUG'] = true;
+putenv('APP_ENV=local');
+$_ENV['APP_ENV'] = 'local';
+$_SERVER['APP_ENV'] = 'local';
 
 try {
+    /** @var Application $app */
+    $app = require_once __DIR__.'/../bootstrap/app.php';
+
+    $app->useStoragePath('/tmp/storage');
+
+    $directories = [
+        '/tmp/storage/framework/views',
+        '/tmp/storage/framework/cache/data',
+        '/tmp/storage/framework/sessions',
+        '/tmp/storage/logs',
+        '/tmp/storage/app/public',
+    ];
+
+    foreach ($directories as $dir) {
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+    }
+
     $response = $app->handleRequest(Request::capture());
     if (method_exists($response, 'send')) {
         $response->send();
     }
 } catch (\Throwable $e) {
-    echo "<h1>Vercel Debug Error:</h1>";
+    echo "<h1>Vercel Fatal Crash:</h1>";
     echo "<p><b>Message:</b> " . $e->getMessage() . "</p>";
     echo "<p><b>File:</b> " . $e->getFile() . " on line " . $e->getLine() . "</p>";
-    echo "<pre style='background:#f4f4f4; padding:10px;'>" . $e->getTraceAsString() . "</pre>";
+    echo "<pre style='background:#f4f4f4; padding:10px; overflow-x: auto;'>" . $e->getTraceAsString() . "</pre>";
 }
