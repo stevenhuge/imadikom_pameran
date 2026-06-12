@@ -5,15 +5,8 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+// Register the Composer autoloader...
 require __DIR__.'/../vendor/autoload.php';
-
-// FORCE DEBUG MODE TO SEE THE ERROR ON VERCEL
-putenv('APP_DEBUG=true');
-$_ENV['APP_DEBUG'] = true;
-$_SERVER['APP_DEBUG'] = true;
-putenv('APP_ENV=local');
-$_ENV['APP_ENV'] = 'local';
-$_SERVER['APP_ENV'] = 'local';
 
 try {
     /** @var Application $app */
