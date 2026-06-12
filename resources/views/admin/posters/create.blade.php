@@ -66,7 +66,7 @@
             <div>
                 <label for="gambar" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Upload Gambar Poster</label>
                 <input type="file" name="gambar" id="gambar" required accept=".jpg,.jpeg,.png,.webp"
-                    class="w-full text-sm text-slate-600 dark:text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pastel-yellow dark:bg-gold file:text-ink hover:file:bg-pastel-yellow dark:bg-gold/90 transition file:cursor-pointer cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 p-2">
+                    class="w-full text-sm text-slate-600 dark:text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 dark:file:bg-violet-500/20 file:text-violet-600 dark:file:text-violet-400 hover:file:bg-violet-100 dark:hover:file:bg-violet-500/30 transition file:cursor-pointer cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 p-2">
                 <p class="text-slate-500 dark:text-slate-400 text-xs mt-2">Format: JPG, JPEG, PNG, WEBP. Maks 5MB.</p>
                 @error('gambar')
                     <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
