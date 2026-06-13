@@ -9,11 +9,13 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name'     => 'Admin Utama',
-            'email'    => 'admin@voting.com',
-            'password' => Hash::make('password'),
-            'role'     => 'admin',
-        ]);
+        User::updateOrCreate(
+            ['email'    => 'admin@voting.com'],
+            [
+                'name'     => 'Admin Utama',
+                'password' => Hash::make('password'),
+                'role'     => 'superadmin',
+            ]
+        );
     }
 }

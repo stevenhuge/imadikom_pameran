@@ -194,7 +194,7 @@
                     <button disabled class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm font-semibold cursor-not-allowed mt-4">
                         Voting Ditutup
                     </button>
-                @elseif(auth()->user()->hasVoted())
+                @elseif(!is_null($userVotedPosterId))
                 <div class="mt-4 inline-block text-sm text-violet-600 dark:text-violet-400-600 dark:text-gold/70 border border-pastel-yellow dark:border-gold/20 px-4 py-2 rounded-full">
                     ✓ Suaramu sudah tercatat
                 </div>
@@ -220,7 +220,7 @@
         @forelse($posters as $poster)
         @php
             $isVotedByUser = auth()->check() && $userVotedPosterId === $poster->id;
-            $hasVoted = auth()->check() && auth()->user()->hasVoted();
+            $hasVoted = auth()->check() && !is_null($userVotedPosterId);
         @endphp
 
         <div class="flex flex-col group relative rounded-2xl overflow-hidden border transition-all duration-500

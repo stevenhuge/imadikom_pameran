@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 // ═══════════════════════════════════════════
 // PUBLIC ROUTES
 // ═══════════════════════════════════════════
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::middleware('throttle:global')->get('/', [HomeController::class, 'index'])->name('home');
 
 // API ROUTES
 Route::get('/api/check-nim/{nim}', [BidikmisiMemberController::class, 'checkNim'])->name('api.check.nim');
@@ -24,7 +24,7 @@ require __DIR__.'/auth.php';
 // VOTER ROUTES (Login Required)
 // ═══════════════════════════════════════════
 Route::middleware(['auth'])->group(function () {
-    Route::post('/vote/{poster}', [VoteController::class, 'store'])->name('vote.store');
+    Route::middleware('throttle:voting')->post('/vote/{poster}', [VoteController::class, 'store'])->name('vote.store');
     Route::get('/dashboard', function () {
         return redirect()->route('home');
     });
@@ -40,4 +40,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('members/import', [BidikmisiMemberController::class, 'import'])->name('members.import');
     Route::resource('members', BidikmisiMemberController::class)->except(['show']);
     Route::get('/votes', [AdminVoteController::class, 'index'])->name('votes.index');
+
+    Route::middleware(['superadmin'])->group(function () {
+        Route::resource('admins', \App\Http\Controllers\Admin\AdminController::class)->except(['show']);
+    });
 });
