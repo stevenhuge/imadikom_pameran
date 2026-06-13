@@ -15,6 +15,13 @@ Route::middleware('throttle:global')->get('/', [HomeController::class, 'index'])
 // API ROUTES
 Route::get('/api/check-nim/{nim}', [BidikmisiMemberController::class, 'checkNim'])->name('api.check.nim');
 
+// VERCEL MIGRATION FIX
+Route::get('/vercel-migrate', function () {
+    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'AdminSeeder', '--force' => true]);
+    return 'Migrations and Seeder run successfully on Vercel! <a href="/login">Go to Login</a>';
+});
+
 // ═══════════════════════════════════════════
 // AUTH ROUTES (Breeze)
 // ═══════════════════════════════════════════

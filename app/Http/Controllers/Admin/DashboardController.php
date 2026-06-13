@@ -26,7 +26,9 @@ class DashboardController extends Controller
         $voting_status = \App\Models\Setting::get('voting_status', 'open');
         $voting_deadline = \App\Models\Setting::get('voting_deadline');
 
-        return view('admin.dashboard', compact('stats', 'leaderboard', 'voting_status', 'voting_deadline'));
+        $admins = User::whereIn('role', ['admin', 'superadmin'])->get();
+
+        return view('admin.dashboard', compact('stats', 'leaderboard', 'voting_status', 'voting_deadline', 'admins'));
     }
 
     public function updateSettings(Request $request)
