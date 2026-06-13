@@ -28,7 +28,7 @@
     {{-- VOTING SETTINGS --}}
     <div class="rounded-2xl bg-slate-50 dark:bg-slate-800 overflow-hidden shadow-xl backdrop-blur-md mb-8 p-6">
         <h2 class="font-semibold text-slate-800 dark:text-white mb-4"><svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>Pengaturan Voting</h2>
-        <form action="{{ route('admin.settings.update') }}" method="POST" class="flex flex-col md:flex-row gap-6 items-end">
+        <form action="{{ route('admin.settings.update') }}" method="POST" class="flex flex-col md:flex-row gap-6 items-start md:items-end">
             @csrf
             <div class="w-full md:w-1/3">
                 <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Status Voting</label>
@@ -53,55 +53,57 @@
             <h2 class="font-semibold text-slate-800 dark:text-white"><svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>Leaderboard Karya</h2>
             <a href="{{ route('admin.posters.create') }}" class="text-xs px-4 py-2 rounded-full bg-pastel-yellow dark:bg-gold text-ink font-semibold hover:bg-pastel-yellow dark:bg-gold/90 transition shadow-md">+ Tambah Poster</a>
         </div>
-        <table class="w-full">
-            <thead>
-                <tr class="text-left text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
-                    <th class="px-6 py-4">Rank</th>
-                    <th class="px-6 py-4">Karya</th>
-                    <th class="px-6 py-4">Pembuat</th>
-                    <th class="px-6 py-4 text-right">Suara</th>
-                    <th class="px-6 py-4 text-right">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($leaderboard as $index => $poster)
-                <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:bg-white/5 transition-colors">
-                    <td class="px-6 py-4">
-                        <span class="w-7 h-7 inline-flex items-center justify-center rounded-full text-xs font-bold
-                            {{ $index === 0 ? 'bg-yellow-400 text-yellow-900' : ($index === 1 ? 'bg-slate-300 text-slate-900' : ($index === 2 ? 'bg-amber-600 text-slate-800 dark:text-white' : 'bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400')) }}">
-                            {{ $index + 1 }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <img src="{{ str_starts_with($poster->gambar, 'http') ? $poster->gambar : asset('storage/' . $poster->gambar) }}" class="w-10 h-10 rounded-lg object-cover">
-                            <span class="text-slate-800 dark:text-white text-sm font-medium">{{ $poster->judul }}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-slate-600 dark:text-slate-300 text-sm">
-                        <div class="flex items-center gap-2">
-                            {{ $poster->pembuat }}
-                            @if($poster->is_bidikmisi)
-                                <img src="{{ asset('images/logo2.png') }}" class="h-3.5 w-auto object-contain" alt="Imadikom" title="Anggota Imadikom">
-                            @endif
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <span class="text-violet-600 dark:text-violet-400-600 dark:text-gold font-bold">{{ $poster->votes_count }}</span>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end gap-2">
-                            <a href="{{ route('admin.posters.edit', $poster) }}" class="text-xs px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:text-white transition">Edit</a>
-                            <form action="{{ route('admin.posters.destroy', $poster) }}" method="POST" onsubmit="return confirm('Hapus poster ini?')">
-                                @csrf @method('DELETE')
-                                <button class="text-xs px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition">Hapus</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="text-left text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
+                        <th class="px-6 py-4">Rank</th>
+                        <th class="px-6 py-4">Karya</th>
+                        <th class="px-6 py-4">Pembuat</th>
+                        <th class="px-6 py-4 text-right">Suara</th>
+                        <th class="px-6 py-4 text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($leaderboard as $index => $poster)
+                    <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:bg-white/5 transition-colors">
+                        <td class="px-6 py-4">
+                            <span class="w-7 h-7 inline-flex items-center justify-center rounded-full text-xs font-bold
+                                {{ $index === 0 ? 'bg-yellow-400 text-yellow-900' : ($index === 1 ? 'bg-slate-300 text-slate-900' : ($index === 2 ? 'bg-amber-600 text-slate-800 dark:text-white' : 'bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400')) }}">
+                                {{ $index + 1 }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <img src="{{ str_starts_with($poster->gambar, 'http') ? $poster->gambar : asset('storage/' . $poster->gambar) }}" class="w-10 h-10 rounded-lg object-cover">
+                                <span class="text-slate-800 dark:text-white text-sm font-medium">{{ $poster->judul }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 text-sm">
+                            <div class="flex items-center gap-2">
+                                {{ $poster->pembuat }}
+                                @if($poster->is_bidikmisi)
+                                    <img src="{{ asset('images/logo2.png') }}" class="h-3.5 w-auto object-contain" alt="Imadikom" title="Anggota Imadikom">
+                                @endif
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <span class="text-violet-600 dark:text-violet-400-600 dark:text-gold font-bold">{{ $poster->votes_count }}</span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ route('admin.posters.edit', $poster) }}" class="text-xs px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:text-white transition">Edit</a>
+                                <form action="{{ route('admin.posters.destroy', $poster) }}" method="POST" onsubmit="return confirm('Hapus poster ini?')">
+                                    @csrf @method('DELETE')
+                                    <button class="text-xs px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition">Hapus</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @endsection
