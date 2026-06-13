@@ -33,7 +33,7 @@ class PosterController extends Controller
 
         $validated['is_bidikmisi'] = $request->boolean('is_bidikmisi');
 
-        if (env('CLOUDINARY_URL')) {
+        if ($this->getCloudinaryUrl()) {
             $validated['gambar'] = $this->uploadToCloudinary($request->file('gambar'));
         } else {
             $validated['gambar'] = $request->file('gambar')->store('posters', 'public');
@@ -63,7 +63,7 @@ class PosterController extends Controller
         $validated['is_bidikmisi'] = $request->boolean('is_bidikmisi');
 
         if ($request->hasFile('gambar')) {
-            if (env('CLOUDINARY_URL')) {
+            if ($this->getCloudinaryUrl()) {
                 $this->deleteFromCloudinary($poster->gambar);
                 $validated['gambar'] = $this->uploadToCloudinary($request->file('gambar'));
             } else {
@@ -81,7 +81,7 @@ class PosterController extends Controller
 
     public function destroy(Poster $poster)
     {
-        if (env('CLOUDINARY_URL')) {
+        if ($this->getCloudinaryUrl()) {
             $this->deleteFromCloudinary($poster->gambar);
         } else {
             Storage::disk('public')->delete($poster->gambar);
@@ -91,16 +91,21 @@ class PosterController extends Controller
         return back()->with('success', 'Poster berhasil dihapus!');
     }
 
+    private function getCloudinaryUrl()
+    {
+        return env('CLOUDINARY_URL') ?? $_ENV['CLOUDINARY_URL'] ?? $_SERVER['CLOUDINARY_URL'] ?? null;
+    }
+
     private function uploadToCloudinary($file)
     {
-        $cloudinaryUrl = env('CLOUDINARY_URL');
+        $cloudinaryUrl = $this->getCloudinaryUrl();
         $parsedUrl = parse_url($cloudinaryUrl);
         $apiKey = $parsedUrl['user'];
         $apiSecret = $parsedUrl['pass'];
         $cloudName = $parsedUrl['host'];
 
         $timestamp = time();
-        $signature = sha1("timestamp={$timestamp}{$apiSecret}");
+        $signature = sha1("folder=imadikom_posters&timestamp={$timestamp}{$apiSecret}");
 
         $response = Http::attach(
             'file', file_get_contents($file->getRealPath()), $file->getClientOriginalName()
@@ -122,7 +127,7 @@ class PosterController extends Controller
     {
         if (!str_contains($url, 'cloudinary.com')) return;
 
-        $cloudinaryUrl = env('CLOUDINARY_URL');
+        $cloudinaryUrl = $this->getCloudinaryUrl();
         $parsedUrl = parse_url($cloudinaryUrl);
         $apiKey = $parsedUrl['user'];
         $apiSecret = $parsedUrl['pass'];
