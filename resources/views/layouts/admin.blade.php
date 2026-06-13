@@ -67,15 +67,22 @@
         });
     </script>
 
-    <div class="flex h-screen w-full">
+    <div x-data="{ sidebarOpen: false }" class="flex h-screen w-full bg-slate-100 dark:bg-slate-900 overflow-hidden">
+        
+        {{-- MOBILE OVERLAY --}}
+        <div x-show="sidebarOpen" x-transition.opacity class="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden" @click="sidebarOpen = false" x-cloak></div>
+
         {{-- SIDEBAR --}}
-        <aside class="w-72 flex-shrink-0 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-colors duration-300">
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto flex-shrink-0">
             <div class="p-6 flex items-center justify-between border-b border-slate-200 dark:border-slate-700">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 group">
                     <img src="{{ asset('images/logo2.png') }}" class="h-8 w-auto group-hover:scale-105 transition">
                     <span class="font-serif italic text-xl text-slate-800 dark:text-white tracking-wide">Admin</span>
                 </a>
-                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                <button @click="sidebarOpen = false" class="p-2 rounded-full lg:hidden hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                    <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+                <button onclick="toggleTheme()" class="p-2 rounded-full hidden lg:block hover:bg-slate-100 dark:hover:bg-slate-700 transition">
                     <svg class="w-5 h-5 hidden dark:block text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                     <svg class="w-5 h-5 block dark:hidden text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                 </button>
@@ -114,7 +121,21 @@
         </aside>
 
         {{-- MAIN CONTENT --}}
-        <main class="flex-1 h-full overflow-y-auto relative">
+        <main class="flex-1 h-full overflow-y-auto relative flex flex-col">
+            {{-- MOBILE HEADER --}}
+            <header class="lg:hidden flex items-center justify-between p-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <button @click="sidebarOpen = true" class="p-2 -ml-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <span class="font-serif italic text-xl text-slate-800 dark:text-white">Admin Panel</span>
+                </div>
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                    <svg class="w-5 h-5 hidden dark:block text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg class="w-5 h-5 block dark:hidden text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                </button>
+            </header>
+
             @yield('content')
         </main>
     </div>
