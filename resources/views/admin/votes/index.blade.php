@@ -3,12 +3,30 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-6 py-10 ">
-    <div class="mb-10 flex items-center justify-between">
+    <div class="mb-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-            <h1 class="font-serif italic text-4xl text-slate-800 dark:text-white mb-1">Data Voting</h1>
-            <p class="text-slate-500 dark:text-slate-400 text-sm">Log detail pemilih dan karya yang dipilih.</p>
+            @if(isset($competition) && $competition)
+                <a href="{{ route('admin.competitions.dashboard', $competition) }}" class="text-sm text-slate-500 hover:text-slate-800 dark:hover:text-white mb-3 inline-flex items-center gap-1 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    Kembali ke Dashboard Kompetisi
+                </a>
+                <h1 class="font-serif  text-4xl text-slate-800 dark:text-white mb-1">Data Voting: {{ $competition->name }}</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Log detail pemilih dan karya yang dipilih pada kompetisi ini.</p>
+            @else
+                <h1 class="font-serif  text-4xl text-slate-800 dark:text-white mb-1">Data Voting (Semua)</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Log detail pemilih dan karya yang dipilih dari seluruh kompetisi.</p>
+            @endif
         </div>
-        
+        <div class="flex items-center gap-3">
+            <form action="{{ route('admin.votes.index') }}" method="GET" class="flex gap-2">
+                <select name="competition_id" onchange="this.form.submit()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-4 py-2 text-sm text-slate-700 dark:text-slate-300 outline-none">
+                    <option value="">Semua Kompetisi</option>
+                    @foreach($competitions as $comp)
+                        <option value="{{ $comp->id }}" {{ request('competition_id') == $comp->id ? 'selected' : '' }}>{{ $comp->year }} - {{ $comp->name }}</option>
+                    @endforeach
+                </select>
+            </form>
+        </div>
     </div>
 
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 overflow-hidden backdrop-blur-md">

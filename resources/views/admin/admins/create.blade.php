@@ -5,7 +5,7 @@
 <div class="max-w-4xl mx-auto px-6 py-10">
     <div class="mb-10 flex items-center justify-between">
         <div>
-            <h1 class="font-serif italic text-4xl text-slate-800 dark:text-white mb-1">Tambah Admin Baru</h1>
+            <h1 class="font-serif  text-4xl text-slate-800 dark:text-white mb-1">Tambah Admin Baru</h1>
             <p class="text-slate-500 dark:text-slate-400 text-sm">Tambahkan akses admin baru untuk sistem.</p>
         </div>
         <a href="{{ route('admin.admins.index') }}" class="text-xs px-4 py-2 rounded-full border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition">Kembali</a>

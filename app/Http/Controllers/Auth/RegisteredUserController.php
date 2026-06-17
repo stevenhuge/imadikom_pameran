@@ -30,21 +30,45 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:voter,participant'],
+        ];
+
+        if ($request->role === 'participant') {
+            $rules['nim'] = ['required', 'string', 'max:20', 'unique:users,nim'];
+        }
+
+        $request->validate($rules, [
+            'nim.required' => 'NIM wajib diisi jika mendaftar sebagai peserta.',
+            'nim.unique' => 'NIM ini sudah terdaftar sebagai akun peserta.',
         ]);
+
+        $isBidikmisi = false;
+        if ($request->role === 'participant') {
+            $isBidikmisi = \Illuminate\Support\Facades\DB::table('bidikmisi_members')
+                ->where('nim', $request->nim)
+                ->exists();
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'nim' => $request->role === 'participant' ? $request->nim : null,
+            'is_bidikmisi' => $isBidikmisi,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
+
+        if ($user->role === 'participant') {
+            return redirect()->route('participant.dashboard');
+        }
 
         return redirect(route('home', absolute: false));
     }

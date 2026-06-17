@@ -9,15 +9,24 @@ use Illuminate\Support\Facades\Http;
 
 class PosterController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posters = Poster::withCount('votes')->latest()->paginate(10);
-        return view('admin.posters.index', compact('posters'));
+        $query = Poster::withCount('votes')->with('competition')->latest();
+        
+        if ($request->has('competition_id')) {
+            $query->where('competition_id', $request->competition_id);
+        }
+
+        $posters = $query->paginate(10);
+        $competitions = \App\Models\Competition::orderBy('year', 'desc')->get();
+
+        return view('admin.posters.index', compact('posters', 'competitions'));
     }
 
     public function create()
     {
-        return view('admin.posters.create');
+        $competitions = \App\Models\Competition::orderBy('year', 'desc')->get();
+        return view('admin.posters.create', compact('competitions'));
     }
 
     public function store(Request $request)
@@ -27,11 +36,14 @@ class PosterController extends Controller
             'pembuat'  => 'required|string|max:255',
             'nim'      => 'nullable|string|max:20',
             'is_bidikmisi' => 'boolean',
+            'is_visible' => 'boolean',
+            'competition_id' => 'required|exists:competitions,id',
             'deskripsi'=> 'nullable|string',
             'gambar'   => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $validated['is_bidikmisi'] = $request->boolean('is_bidikmisi');
+        $validated['is_visible'] = $request->boolean('is_visible', true);
 
         if ($this->getCloudinaryUrl()) {
             $validated['gambar'] = $this->uploadToCloudinary($request->file('gambar'));
@@ -46,7 +58,8 @@ class PosterController extends Controller
 
     public function edit(Poster $poster)
     {
-        return view('admin.posters.edit', compact('poster'));
+        $competitions = \App\Models\Competition::orderBy('year', 'desc')->get();
+        return view('admin.posters.edit', compact('poster', 'competitions'));
     }
 
     public function update(Request $request, Poster $poster)
@@ -56,11 +69,14 @@ class PosterController extends Controller
             'pembuat'  => 'required|string|max:255',
             'nim'      => 'nullable|string|max:20',
             'is_bidikmisi' => 'boolean',
+            'is_visible' => 'boolean',
+            'competition_id' => 'required|exists:competitions,id',
             'deskripsi'=> 'nullable|string',
             'gambar'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $validated['is_bidikmisi'] = $request->boolean('is_bidikmisi');
+        $validated['is_visible'] = $request->boolean('is_visible');
 
         if ($request->hasFile('gambar')) {
             if ($this->getCloudinaryUrl()) {
@@ -89,6 +105,16 @@ class PosterController extends Controller
         
         $poster->delete();
         return back()->with('success', 'Poster berhasil dihapus!');
+    }
+
+    public function toggleVisibility(Poster $poster)
+    {
+        $poster->update([
+            'is_visible' => !$poster->is_visible
+        ]);
+
+        $status = $poster->is_visible ? 'ditampilkan' : 'disembunyikan';
+        return back()->with('success', "Poster \"{$poster->judul}\" berhasil {$status}!");
     }
 
     private function getCloudinaryUrl()

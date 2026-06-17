@@ -12,35 +12,14 @@ class DashboardController extends Controller
     public function index()
     {
         $stats = [
+            'total_competitions' => \App\Models\Competition::count(),
             'total_voters' => User::count(),
-            'total_posters' => Poster::count(),
             'total_votes' => Vote::count(),
-            'total_bidikmisi' => Poster::where('is_bidikmisi', true)->count(),
         ];
 
-        $leaderboard = Poster::withCount('votes')
-            ->orderBy('votes_count', 'desc')
-            ->take(5)
-            ->get();
-
-        $voting_status = \App\Models\Setting::get('voting_status', 'open');
-        $voting_deadline = \App\Models\Setting::get('voting_deadline');
-
+        $recent_competitions = \App\Models\Competition::latest()->take(5)->get();
         $admins = User::whereIn('role', ['admin', 'superadmin'])->get();
 
-        return view('admin.dashboard', compact('stats', 'leaderboard', 'voting_status', 'voting_deadline', 'admins'));
-    }
-
-    public function updateSettings(Request $request)
-    {
-        $request->validate([
-            'voting_status' => 'required|in:open,closed',
-            'voting_deadline' => 'nullable|date',
-        ]);
-
-        \App\Models\Setting::set('voting_status', $request->voting_status);
-        \App\Models\Setting::set('voting_deadline', $request->voting_deadline);
-
-        return back()->with('success', 'Pengaturan voting berhasil diperbarui!');
+        return view('admin.dashboard', compact('stats', 'recent_competitions', 'admins'));
     }
 }

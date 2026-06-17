@@ -99,13 +99,18 @@
                     <img src="{{ asset('images/logo1.png') }}" alt="Logo 1" class="h-10 w-auto object-contain drop-shadow-md hover:scale-105 transition-transform">
                     <img src="{{ asset('images/logo2.png') }}" alt="Logo 2" class="h-10 w-auto object-contain drop-shadow-md hover:scale-105 transition-transform">
                 </div>
-                <a href="{{ route('home') }}" class="font-serif italic text-xl text-violet-500 dark:text-violet border-l border-slate-300 dark:border-slate-700 pl-4 hidden sm:block hover:text-violet-600 dark:hover:text-violet-light transition-colors">
-                    ✦ Voting Karya
+                <a href="{{ request()->routeIs('home') ? route('landing') : route('home') }}" class="font-serif  text-xl text-violet-500 dark:text-violet border-l border-slate-300 dark:border-slate-700 pl-4 hidden sm:block hover:text-violet-600 dark:hover:text-violet-light transition-colors">
+                    ✦ {{ request()->routeIs('home') ? 'Pameran Voting' : 'IMADIKOM' }}
                 </a>
             </div>
             
             {{-- DESKTOP MENU --}}
             <div class="hidden sm:flex items-center gap-2 sm:gap-4">
+                <a href="{{ route('landing') }}#profil" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-violet-600 dark:hover:text-violet-400 transition">Profil</a>
+                <a href="{{ route('landing') }}#organisasi" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-violet-600 dark:hover:text-violet-400 transition">Struktur Organisasi</a>
+                <a href="{{ route('landing') }}#kegiatan" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-violet-600 dark:hover:text-violet-400 transition">Kegiatan</a>
+                <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-violet-600 dark:hover:text-violet-400 transition mr-2 border-r pr-4 dark:border-slate-700 border-slate-300">Voting</a>
+
                 {{-- DARK/LIGHT TOGGLE --}}
                 <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300">
                     <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
@@ -113,9 +118,11 @@
                 </button>
 
                 @auth
-                    <span class="text-sm text-slate-600 dark:text-slate-400">{{ auth()->user()->name }}</span>
-                    @if(auth()->user()->isAdmin())
+                    <span class="text-sm text-slate-600 dark:text-slate-400">{{ auth()->user()->name }}</span>                    @if(auth()->user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}" class="text-xs px-4 py-2 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300 hover:bg-violet-200 dark:hover:bg-violet-900/50 transition font-medium">Admin</a>
+                    @endif
+                    @if(auth()->user()->role === 'participant')
+                        <a href="{{ route('participant.dashboard') }}" class="text-xs px-4 py-2 rounded-full bg-gold/10 text-gold dark:bg-gold/20 dark:text-gold-light hover:bg-gold/20 transition font-medium">Dashboard</a>
                     @endif
                     <form action="{{ route('logout') }}" method="POST" class="inline">
                         @csrf
@@ -123,10 +130,10 @@
                     </form>
                 @else
                     <a href="{{ route('login') }}" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">Masuk</a>
-                    <a href="{{ route('register') }}" class="text-sm px-5 py-2.5 rounded-full bg-violet-500 text-white dark:bg-violet-600 font-semibold hover:bg-violet-600 dark:hover:bg-violet-500 transition shadow-sm">Daftar</a>
+                    <a href="{{ route('register') }}" class="text-sm px-5 py-2.5 rounded-full bg-violet-500 text-white dark:bg-violet-600 font-semibold hover:bg-violet-600 dark:hover:bg-violet-50 transition shadow-sm">Daftar</a>
                 @endauth
             </div>
-
+ 
             {{-- MOBILE MENU BUTTON & THEME TOGGLE --}}
             <div class="flex items-center gap-2 sm:hidden">
                 <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300">
@@ -139,16 +146,25 @@
                 </button>
             </div>
         </div>
-
+ 
         {{-- MOBILE MENU DROPDOWN --}}
         <div x-show="mobileMenuOpen" x-transition.opacity x-cloak class="sm:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 absolute w-full shadow-xl">
+            <div class="px-6 py-4 flex flex-col gap-3 border-b border-slate-100 dark:border-slate-800">
+                <a href="{{ route('landing') }}#profil" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-violet-600">Profil</a>
+                <a href="{{ route('landing') }}#organisasi" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-violet-600">Struktur Organisasi</a>
+                <a href="{{ route('landing') }}#kegiatan" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-violet-600">Kegiatan</a>
+                <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-violet-600">Pameran Voting</a>
+            </div>
             <div class="px-6 py-6 flex flex-col gap-4">
                 @auth
                     <span class="text-sm text-slate-600 dark:text-slate-400 font-medium pb-2 border-b border-slate-100 dark:border-slate-800">Hai, {{ auth()->user()->name }}</span>
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}" class="text-sm px-4 py-2.5 rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300 font-medium text-center">Ke Halaman Admin</a>
                     @endif
-                    <form action="{{ route('logout') }}" method="POST" class="block w-full">
+                    @if(auth()->user()->role === 'participant')
+                        <a href="{{ route('participant.dashboard') }}" class="text-sm px-4 py-2.5 rounded-xl bg-gold/10 text-gold dark:bg-gold/20 dark:text-gold-light font-medium text-center hover:bg-gold/20 transition">Dashboard Peserta</a>
+                    @endif
+                    <form action="{{ route('logout') }}" method="POST" class="block w-full">">
                         @csrf
                         <button class="w-full text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition font-medium">Keluar</button>
                     </form>

@@ -11,7 +11,7 @@
 
     <div class="w-full max-w-md relative z-10 animate-fade-up">
         <div class="text-center mb-10">
-            <h1 class="font-serif italic text-5xl text-slate-800 dark:text-white mb-3">Buat Akun</h1>
+            <h1 class="font-serif  text-5xl text-slate-800 dark:text-white mb-3">Buat Akun</h1>
             <p class="text-slate-600 dark:text-slate-300">Daftar sekarang untuk berpartisipasi dalam voting.</p>
         </div>
 
@@ -63,6 +63,35 @@
                     @enderror
                 </div>
 
+                <!-- Role Selection -->
+                <div>
+                    <label for="role" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Mendaftar Sebagai</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="role" value="voter" class="peer sr-only" {{ old('role', 'voter') === 'voter' ? 'checked' : '' }}>
+                            <div class="px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 peer-checked:border-violet-500 peer-checked:bg-violet-50 dark:peer-checked:bg-violet-900/20 text-center font-bold text-slate-600 dark:text-slate-300 peer-checked:text-violet-700 dark:peer-checked:text-violet-400 transition">Voter Saja</div>
+                        </label>
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="role" value="participant" class="peer sr-only" {{ old('role') === 'participant' ? 'checked' : '' }}>
+                            <div class="px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 peer-checked:border-gold peer-checked:bg-gold/10 dark:peer-checked:bg-gold/20 text-center font-bold text-slate-600 dark:text-slate-300 peer-checked:text-gold-light dark:peer-checked:text-gold transition">Peserta Lomba</div>
+                        </label>
+                    </div>
+                    @error('role')
+                        <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- NIM Input (Only for Participant) -->
+                <div id="nim-container" class="space-y-2 {{ old('role') === 'participant' ? '' : 'hidden' }}">
+                    <label for="nim" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">NIM (Nomor Induk Mahasiswa)</label>
+                    <input id="nim" type="text" name="nim" value="{{ old('nim') }}"
+                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-white placeholder-slate-300 dark:placeholder-slate-600 focus:border-pastel-yellow dark:border-gold focus:ring-1 focus:ring-violet-400 dark:focus:ring-gold outline-none transition"
+                        placeholder="Contoh: 22.11.1234">
+                    @error('nim')
+                        <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="pt-4">
                     <button type="submit" class="w-full py-4 rounded-xl bg-pastel-yellow dark:bg-gold text-ink font-bold hover:bg-pastel-yellow dark:bg-gold-light transition-all shadow-lg hover:shadow-gold/25 hover:-translate-y-0.5">
                         Daftar Sekarang
@@ -80,3 +109,25 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleRadios = document.querySelectorAll('input[name="role"]');
+        const nimContainer = document.getElementById('nim-container');
+        const nimInput = document.getElementById('nim');
+
+        roleRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'participant') {
+                    nimContainer.classList.remove('hidden');
+                    nimInput.setAttribute('required', 'required');
+                } else {
+                    nimContainer.classList.add('hidden');
+                    nimInput.removeAttribute('required');
+                }
+            });
+        });
+    });
+</script>
+@endpush

@@ -28,8 +28,8 @@
         @endif
 
         <h1 class="font-serif text-6xl md:text-8xl leading-none mb-6">
-            <span class="italic text-slate-800 dark:text-slate-100">Pilih Karya</span><br>
-            <span class="gradient-text font-serif not-italic">Terbaik Mereka</span>
+            <span class=" text-slate-800 dark:text-slate-100">Pilih Karya</span><br>
+            <span class="gradient-text font-serif not-">Terbaik Mereka</span>
         </h1>
 
         <p class="text-lg text-slate-600 dark:text-slate-300 max-w-xl mx-auto mb-10 leading-relaxed">
@@ -50,17 +50,17 @@
         {{-- Stats bar --}}
         <div class="mt-16 flex items-center justify-center gap-12 text-center">
             <div>
-                <div class="font-serif italic text-3xl text-violet-600 dark:text-violet-400-600 dark:text-gold">{{ $posters->count() }}</div>
+                <div class="font-serif  text-3xl text-violet-600 dark:text-violet-400-600 dark:text-gold">{{ $posters->count() }}</div>
                 <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Karya</div>
             </div>
             <div class="w-px h-10 bg-slate-100 dark:bg-white/10"></div>
             <div>
-                <div class="font-serif italic text-3xl text-violet-600 dark:text-violet-400-600 dark:text-gold">{{ $posters->sum('votes_count') }}</div>
+                <div class="font-serif  text-3xl text-violet-600 dark:text-violet-400-600 dark:text-gold">{{ $posters->sum('votes_count') }}</div>
                 <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Total Suara</div>
             </div>
             <div class="w-px h-10 bg-slate-100 dark:bg-white/10"></div>
             <div>
-                <div class="font-serif italic text-3xl text-violet-600 dark:text-violet-400-600 dark:text-gold">1</div>
+                <div class="font-serif  text-3xl text-violet-600 dark:text-violet-400-600 dark:text-gold">1</div>
                 <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Suara per Voter</div>
             </div>
         </div>
@@ -90,7 +90,7 @@
 <section class="max-w-7xl mx-auto px-6 pt-20 pb-10">
     <div class="text-center mb-16">
         <p class="text-violet-600 dark:text-violet-400-600 dark:text-gold text-xs uppercase tracking-widest mb-2 animate-pulse">Hall of Fame</p>
-        <h2 class="font-serif italic text-4xl md:text-5xl text-slate-800 dark:text-white">Ranking Vote Tertinggi</h2>
+        <h2 class="font-serif  text-4xl md:text-5xl text-slate-800 dark:text-white">Ranking Vote Tertinggi</h2>
         <p class="text-slate-500 dark:text-slate-400 mt-3 text-sm">3 Karya terbaik pilihan terbanyak sejauh ini.</p>
     </div>
 
@@ -128,7 +128,7 @@
                 {{-- Podium Base --}}
                 <div class="w-full h-20 sm:h-28 {{ $style['bg'] }} border {{ $style['border'] }} rounded-b-2xl flex flex-col items-center justify-center relative overflow-hidden backdrop-blur-md">
                     <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
-                    <span class="font-serif italic text-4xl sm:text-6xl {{ $style['color'] }} drop-shadow-2xl relative z-10 leading-none">{{ $style['rank'] }}</span>
+                    <span class="font-serif  text-4xl sm:text-6xl {{ $style['color'] }} drop-shadow-2xl relative z-10 leading-none">{{ $style['rank'] }}</span>
                     <span class="text-[8px] sm:text-[10px] uppercase tracking-widest {{ $style['color'] }} opacity-70 mt-1 relative z-10 font-bold">{{ $style['label'] }}</span>
                 </div>
             </div>
@@ -143,7 +143,7 @@
 {{-- DAFTAR RANKING PESERTA --}}
 <section class="max-w-4xl mx-auto px-6 py-10 mb-10">
     <div class="text-center mb-10">
-        <h2 class="font-serif italic text-3xl text-slate-800 dark:text-white">Daftar Peringkat Peserta</h2>
+        <h2 class="font-serif  text-3xl text-slate-800 dark:text-white">Daftar Peringkat Peserta</h2>
         <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">Total perolehan suara secara keseluruhan.</p>
     </div>
     
@@ -188,7 +188,7 @@
     <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-12 gap-6">
         <div>
             <p class="text-violet-600 dark:text-violet-400-600 dark:text-gold text-xs uppercase tracking-widest mb-2">Galeri Karya</p>
-            <h2 class="font-serif italic text-4xl text-slate-800 dark:text-white">Semua Peserta</h2>
+            <h2 class="font-serif  text-4xl text-slate-800 dark:text-white">Semua Peserta</h2>
             @auth
                 @if(!$is_voting_open)
                     <button disabled class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm font-semibold cursor-not-allowed mt-4">
@@ -357,7 +357,7 @@
             </div>
             
             <div class="p-6 bg-slate-50 dark:bg-slate-800 backdrop-blur-md border-t border-slate-200 dark:border-slate-700">
-                <h3 class="font-serif italic text-2xl sm:text-3xl text-slate-800 dark:text-white mb-1" x-text="modalTitle"></h3>
+                <h3 class="font-serif  text-2xl sm:text-3xl text-slate-800 dark:text-white mb-1" x-text="modalTitle"></h3>
                 <p class="text-slate-600 dark:text-slate-300 text-sm">Karya oleh: <span class="text-slate-800 dark:text-slate-100 font-medium" x-text="modalMaker"></span></p>
             </div>
         </div>

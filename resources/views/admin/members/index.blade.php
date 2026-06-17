@@ -5,7 +5,7 @@
 <div class="max-w-7xl mx-auto px-6 py-10 ">
     <div class="mb-10 flex items-center justify-between">
         <div>
-            <h1 class="font-serif italic text-4xl text-slate-800 dark:text-white mb-1">Data Anggota Imadikom</h1>
+            <h1 class="font-serif  text-4xl text-slate-800 dark:text-white mb-1">Data Anggota Imadikom</h1>
             <p class="text-slate-500 dark:text-slate-400 text-sm">Kelola daftar mahasiswa penerima beasiswa KIPK / Imadikom.</p>
         </div>
         <div class="flex items-center gap-3">

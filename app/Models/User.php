@@ -8,9 +8,9 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $fillable = ['name', 'email', 'password', 'role'];
+    protected $fillable = ['name', 'email', 'password', 'role', 'nim', 'is_bidikmisi'];
     protected $hidden = ['password', 'remember_token'];
-    protected $casts = ['email_verified_at' => 'datetime', 'password' => 'hashed'];
+    protected $casts = ['email_verified_at' => 'datetime', 'password' => 'hashed', 'is_bidikmisi' => 'boolean'];
 
     public function votes()
     {

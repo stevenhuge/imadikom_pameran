@@ -11,7 +11,7 @@
 
     <div class="w-full max-w-md relative z-10 animate-fade-up">
         <div class="text-center mb-10">
-            <h1 class="font-serif italic text-5xl text-slate-800 dark:text-white mb-3">Selamat Datang</h1>
+            <h1 class="font-serif  text-5xl text-slate-800 dark:text-white mb-3">Selamat Datang</h1>
             <p class="text-slate-600 dark:text-slate-300">Masuk untuk mulai memberikan suaramu atau mengelola karya.</p>
         </div>
 

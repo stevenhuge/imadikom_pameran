@@ -5,7 +5,7 @@
 <div class="max-w-3xl mx-auto px-6 py-10 ">
     <div class="mb-10 flex items-center justify-between">
         <div>
-            <h1 class="font-serif italic text-4xl text-slate-800 dark:text-white mb-1">Edit Poster</h1>
+            <h1 class="font-serif  text-4xl text-slate-800 dark:text-white mb-1">Edit Poster</h1>
             <p class="text-slate-500 dark:text-slate-400 text-sm">Perbarui informasi karya poster.</p>
         </div>
         
@@ -15,6 +15,21 @@
         <form action="{{ route('admin.posters.update', $poster) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT')
+
+            <div>
+                <label for="competition_id" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Pilih Kompetisi</label>
+                <select name="competition_id" id="competition_id" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-white focus:border-violet-400 outline-none transition">
+                    <option value="">-- Pilih Kompetisi --</option>
+                    @foreach($competitions as $comp)
+                        <option value="{{ $comp->id }}" {{ old('competition_id', $poster->competition_id) == $comp->id ? 'selected' : '' }}>
+                            {{ $comp->year }} - {{ $comp->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('competition_id')
+                    <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
             <div>
                 <label for="judul" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Judul Karya</label>
