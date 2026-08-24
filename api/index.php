@@ -33,8 +33,30 @@ try {
     // 3. Fix Routing Vercel
     $_SERVER['SCRIPT_NAME'] = '/index.php';
 
-    // 4. Proses Request (Ini otomatis memanggil send() di Laravel 11+)
-    $app->handleRequest(Illuminate\Http\Request::capture());
+    // 4. Proses Request Secara Manual untuk Vercel PHP
+    $request = Illuminate\Http\Request::capture();
+    $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+    
+    // Handle Request
+    $response = $kernel->handle($request);
+    
+    // Kirim Response Body secara paksa
+    $content = $response->getContent();
+    
+    if (empty($content)) {
+        echo "<h1>Response Laravel Kosong!</h1>";
+        echo "<p>Vercel PHP mengeksekusi routing, tetapi Laravel mengembalikan body kosong. Ini biasanya terjadi jika View gagal dirender karena read-only filesystem.</p>";
+    } else {
+        // Bypass $response->send() yang sering tertelan di Vercel PHP
+        foreach ($response->headers->allPreserveCase() as $name => $values) {
+            foreach ($values as $value) {
+                header($name.': '.$value, false, $response->getStatusCode());
+            }
+        }
+        echo $content;
+    }
+    
+    $kernel->terminate($request, $response);
 
 } catch (\Throwable $e) {
     // Tangkap error APAPUN agar Vercel tidak timeout (504)
