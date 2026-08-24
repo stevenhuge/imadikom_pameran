@@ -8,14 +8,18 @@ define('LARAVEL_START', microtime(true));
 require __DIR__.'/../vendor/autoload.php';
 
 try {
-    // 1. Inisialisasi App Laravel
+    // === VERCEL TRACE DIAGNOSTIC ===
+    // Kita akan mencari tahu di baris mana Laravel macet!
+    echo "<h1>Vercel Boot Trace</h1>";
+    
+    echo "[1] Inisialisasi App Laravel...<br>";
     $app = require_once __DIR__.'/../bootstrap/app.php';
+    echo "[OK] App Laravel berhasil diinisialisasi.<br>";
 
-    // 2. Set Storage ke /tmp karena /var/task di Vercel itu Read-Only
+    echo "[2] Setup Storage Path ke /tmp...<br>";
     $storagePath = '/tmp/storage';
     $app->useStoragePath($storagePath);
-
-    // Buat folder-folder yang dibutuhkan Laravel jika belum ada
+    
     $directories = [
         "$storagePath/framework/views",
         "$storagePath/framework/cache/data",
@@ -29,34 +33,25 @@ try {
             mkdir($dir, 0777, true);
         }
     }
+    echo "[OK] Storage Path berhasil disetup.<br>";
 
-    // 3. Fix Routing Vercel
+    echo "[3] Fix Routing Vercel...<br>";
     $_SERVER['SCRIPT_NAME'] = '/index.php';
+    echo "[OK] Routing berhasil disetup.<br>";
 
-    // 4. Proses Request Secara Manual untuk Vercel PHP
+    echo "[4] Menangkap Request...<br>";
     $request = Illuminate\Http\Request::capture();
+    echo "[OK] Request berhasil ditangkap.<br>";
+    
+    echo "[5] Membuat Kernel...<br>";
     $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+    echo "[OK] Kernel berhasil dibuat.<br>";
     
-    // Handle Request
-    $response = $kernel->handle($request);
+    echo "<h2>JIKA ANDA MELIHAT INI, BERARTI LARAVEL BERHASIL BOOTING 100%!</h2>";
+    echo "<p>Masalah macetnya (loading terus) PASTI ada di dalam Controller atau Database saat Request diproses (Kernel->handle).</p>";
     
-    // Kirim Response Body secara paksa
-    $content = $response->getContent();
-    
-    if (empty($content)) {
-        echo "<h1>Response Laravel Kosong!</h1>";
-        echo "<p>Vercel PHP mengeksekusi routing, tetapi Laravel mengembalikan body kosong. Ini biasanya terjadi jika View gagal dirender karena read-only filesystem.</p>";
-    } else {
-        // Bypass $response->send() yang sering tertelan di Vercel PHP
-        foreach ($response->headers->allPreserveCase() as $name => $values) {
-            foreach ($values as $value) {
-                header($name.': '.$value, false, $response->getStatusCode());
-            }
-        }
-        echo $content;
-    }
-    
-    $kernel->terminate($request, $response);
+    // Stop execution here to prove where it hangs!
+    exit;
 
 } catch (\Throwable $e) {
     // Tangkap error APAPUN agar Vercel tidak timeout (504)
