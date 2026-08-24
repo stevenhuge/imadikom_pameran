@@ -72,7 +72,7 @@
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased font-sans transition-colors duration-500 selection:bg-violet-500/30">
 
-    {{-- PAGE LOADER --}}
+    {{-- PAGE LOADER (Disabled temporarily for debugging)
     <div id="page-loader" class="fixed inset-0 z-[9999] bg-slate-100 dark:bg-slate-900 flex flex-col items-center justify-center transition-opacity duration-500">
         <img src="{{ asset('images/logo2.png') }}" class="h-24 w-auto animate-pulse mb-6" alt="Loading">
         <div class="w-48 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -90,6 +90,7 @@
             }
         });
     </script>
+    --}}
 
     {{-- NAVBAR --}}
     <nav x-data="{ mobileMenuOpen: false }" class="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-white/80 border-b border-slate-200 dark:bg-slate-900/80 dark:border-slate-800 transition-colors duration-300">
