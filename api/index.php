@@ -12,6 +12,17 @@ try {
     // Kita akan mencari tahu di baris mana Laravel macet!
     echo "<h1>Vercel Boot Trace</h1>";
     
+    // FIX SUPABASE DEADLOCK: Laravel 11 menggunakan CACHE_STORE=database secara default.
+    // Supabase Pooler tidak mendukung Advisory Locks yang menyebabkan RateLimiter macet (freeze).
+    // Kita harus paksa Vercel menggunakan 'array' atau 'file' untuk Cache dan Session.
+    putenv('CACHE_STORE=array');
+    $_ENV['CACHE_STORE'] = 'array';
+    $_SERVER['CACHE_STORE'] = 'array';
+    
+    putenv('SESSION_DRIVER=cookie');
+    $_ENV['SESSION_DRIVER'] = 'cookie';
+    $_SERVER['SESSION_DRIVER'] = 'cookie';
+    
     echo "[1] Inisialisasi App Laravel...<br>";
     $app = require_once __DIR__.'/../bootstrap/app.php';
     echo "[OK] App Laravel berhasil diinisialisasi.<br>";
