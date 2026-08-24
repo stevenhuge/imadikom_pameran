@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('superadmin', 'admin', 'voter', 'participant') NOT NULL DEFAULT 'voter'");
+        // DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('superadmin', 'admin', 'voter', 'participant') NOT NULL DEFAULT 'voter'");
     }
 
     /**
@@ -20,7 +20,7 @@ return new class extends Migration
     public function down(): void
     {
         // Revert safely by keeping participant as voter or simply resetting enum
-        DB::statement("UPDATE users SET role = 'voter' WHERE role = 'participant'");
-        DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('superadmin', 'admin', 'voter') NOT NULL DEFAULT 'voter'");
+        // DB::statement("UPDATE users SET role = 'voter' WHERE role = 'participant'");
+        // DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('superadmin', 'admin', 'voter') NOT NULL DEFAULT 'voter'");
     }
 };

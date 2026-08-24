@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('superadmin', 'admin', 'voter') DEFAULT 'voter'");
+        // DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('superadmin', 'admin', 'voter') DEFAULT 'voter'");
     }
 
     /**
@@ -20,6 +20,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'voter') DEFAULT 'voter'");
+        // DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'voter') DEFAULT 'voter'");
     }
 };
