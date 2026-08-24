@@ -67,6 +67,7 @@ try {
     }
     
     $kernel->terminate($request, $response);
+} catch (\Throwable $e) {
     // Tangkap error APAPUN agar Vercel tidak timeout (504)
     http_response_code(500);
     echo "<h1>Terjadi Error Fatal di Laravel:</h1>";
