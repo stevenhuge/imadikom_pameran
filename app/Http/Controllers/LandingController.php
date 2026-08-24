@@ -42,6 +42,9 @@ class LandingController extends Controller
         $html = view('landing', compact('departments', 'activities', 'active_year'))->render();
         echo "[CTRL-8] View berhasil dirender!<br>";
         
+        echo "<h2>JIKA ANDA MELIHAT INI, BERARTI CONTROLLER DAN DATABASE BERHASIL 100%!</h2>";
+        exit;
+        
         return $html;
     }
 }
