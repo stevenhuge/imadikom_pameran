@@ -47,13 +47,26 @@ try {
     $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
     echo "[OK] Kernel berhasil dibuat.<br>";
     
-    echo "<h2>JIKA ANDA MELIHAT INI, BERARTI LARAVEL BERHASIL BOOTING 100%!</h2>";
-    echo "<p>Masalah macetnya (loading terus) PASTI ada di dalam Controller atau Database saat Request diproses (Kernel->handle).</p>";
+    echo "<h2>Melanjutkan ke Kernel->handle()...</h2>";
     
-    // Stop execution here to prove where it hangs!
-    exit;
-
-} catch (\Throwable $e) {
+    // Handle Request
+    $response = $kernel->handle($request);
+    
+    // Kirim Response Body secara paksa
+    $content = $response->getContent();
+    
+    if (empty($content)) {
+        echo "<h1>Response Laravel Kosong!</h1>";
+    } else {
+        foreach ($response->headers->allPreserveCase() as $name => $values) {
+            foreach ($values as $value) {
+                header($name.': '.$value, false, $response->getStatusCode());
+            }
+        }
+        echo $content;
+    }
+    
+    $kernel->terminate($request, $response);
     // Tangkap error APAPUN agar Vercel tidak timeout (504)
     http_response_code(500);
     echo "<h1>Terjadi Error Fatal di Laravel:</h1>";
