@@ -1,31 +1,48 @@
 <?php
-// === SCRIPT DIAGNOSIS VERCEL ===
-// Jika halaman ini muncul, berarti Vercel PHP berfungsi dan routing tidak loop.
+/**
+ * Vercel PHP Serverless Entry Point
+ */
 
-$dbHost = getenv('DB_HOST');
-$dbPort = getenv('DB_PORT');
+define('LARAVEL_START', microtime(true));
 
-echo "<h1>Vercel PHP Diagnostic</h1>";
-echo "<b>PHP Version:</b> " . phpversion() . "<br><br>";
+require __DIR__.'/../vendor/autoload.php';
 
-echo "<b>Database Environment Variables:</b><br>";
-echo "DB_HOST: " . ($dbHost ? $dbHost : "<span style='color:red'>KOSONG / TIDAK TERBACA</span>") . "<br>";
-echo "DB_PORT: " . ($dbPort ? $dbPort : "<span style='color:red'>KOSONG</span>") . "<br><br>";
-
-if (!$dbHost || $dbHost === '127.0.0.1') {
-    echo "<h2 style='color:red'>ERROR: Vercel gagal membaca Environment Variable DB_HOST Anda!</h2>";
-    echo "<p>Karena DB_HOST kosong, Laravel mencoba koneksi ke 127.0.0.1 dan inilah yang menyebabkan website 'loading terus' (504 Timeout).</p>";
-    exit;
-}
-
-echo "<i>Mencoba koneksi ke Database ($dbHost:$dbPort)...</i><br>";
 try {
-    $pdo = new PDO("pgsql:host=$dbHost;port=$dbPort;dbname=" . getenv('DB_DATABASE'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'), [PDO::ATTR_TIMEOUT => 3]);
-    echo "<h2 style='color:green'>KONEKSI DATABASE BERHASIL!</h2>";
-} catch (PDOException $e) {
-    echo "<h2 style='color:red'>KONEKSI DATABASE GAGAL!</h2>";
-    echo "<p>" . $e->getMessage() . "</p>";
-}
+    // 1. Inisialisasi App Laravel
+    $app = require_once __DIR__.'/../bootstrap/app.php';
 
-echo "<hr><p>Hapus file <code>api/index.php</code> ini dan kembalikan ke <code>require __DIR__ . '/../public/index.php';</code> jika sudah selesai diperbaiki.</p>";
-exit;
+    // 2. Set Storage ke /tmp karena /var/task di Vercel itu Read-Only
+    $storagePath = '/tmp/storage';
+    $app->useStoragePath($storagePath);
+
+    // Buat folder-folder yang dibutuhkan Laravel jika belum ada
+    $directories = [
+        "$storagePath/framework/views",
+        "$storagePath/framework/cache/data",
+        "$storagePath/framework/sessions",
+        "$storagePath/logs",
+        "$storagePath/app/public",
+    ];
+
+    foreach ($directories as $dir) {
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+    }
+
+    // 3. Fix Routing Vercel
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
+
+    // 4. Proses Request (Ini otomatis memanggil send() di Laravel 11+)
+    $app->handleRequest(Illuminate\Http\Request::capture());
+
+} catch (\Throwable $e) {
+    // Tangkap error APAPUN agar Vercel tidak timeout (504)
+    http_response_code(500);
+    echo "<h1>Terjadi Error Fatal di Laravel:</h1>";
+    echo "<p><b>Message:</b> " . $e->getMessage() . "</p>";
+    echo "<p><b>File:</b> " . $e->getFile() . " on line " . $e->getLine() . "</p>";
+    if (getenv('APP_DEBUG') === 'true') {
+        echo "<pre style='background:#f4f4f4; padding:10px; overflow-x: auto;'>" . $e->getTraceAsString() . "</pre>";
+    }
+}
